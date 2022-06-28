@@ -41,10 +41,10 @@ class _Generator:
         entries = sorted(entries, key=lambda entry: entry.is_file())
         entries_count = len(entries)
         for index, entry in enumerate(entries):
-            connector = ELBOW if index == entries_count - 1 else TEE
+            connector = L if index == entries_count - 1 else HAMMER
             if entry.is_dir():
                 self._add_directory(
-                    entry, index, entries_count, prefix, connector
+                    entry, index, entries_count, space, connector
                 )
             else:
-                self._add_file(entry, prefix, connector)
+                self._add_file(entry, space, connector)
