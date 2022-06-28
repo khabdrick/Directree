@@ -10,7 +10,7 @@ HAMMER = "┣━ 🌿"
 PIPE_SPACE = "┃   "
 SPACE = "    "
 
-class DirectoryTree:
+class Directree:
     def __init__(self, root_dir):
         self._tree_generator = _Generator(root_dir)
 
