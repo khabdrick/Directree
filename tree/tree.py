@@ -5,14 +5,14 @@ import pathlib
 
 # initialise characters that is used to visualizethe directory tree
 PIPE = "┃"
-L = "┗━ 🌿"
-HAMMER = "┣━ 🌿"
+L = "┗━━🌿"
+HAMMER = "┣━━🌿"
 PIPE_SPACE = "┃   "
 SPACE = "    "
 
 class Directree:
-    def __init__(self, root_dir):
-        self._tree_generator = _Generator(root_dir)
+    def __init__(self, root_dir, dir_only=False):
+        self._tree_generator = _Generator(root_dir, dir_only)
 
     def generate_tree(self):
         tree = self._tree_generator.grow_tree()
@@ -21,8 +21,9 @@ class Directree:
 
 class _Generator:
     """Generates the Directory tree"""
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, dir_only=False):
         self._root_dir = pathlib.Path(root_dir)
+        self._dir_only = dir_only
         self._tree = []
 
     def grow_tree(self):
@@ -37,8 +38,7 @@ class _Generator:
 
     def _tree_body(self, directory, prefix=""):
         """Generate directory tree diagram"""
-        entries = directory.iterdir()
-        entries = sorted(entries, key=lambda entry: entry.is_file())
+        entries = self._prepare_entries(directory)
         entries_count = len(entries)
         for index, entry in enumerate(entries):
             connector = L if index == entries_count - 1 else HAMMER
@@ -48,6 +48,13 @@ class _Generator:
                 )
             else:
                 self._add_file(entry, prefix, connector)
+    def _prepare_entries(self, directory):
+        entries = directory.iterdir()
+        if self._dir_only:
+            entries = [entry for entry in entries if entry.is_dir()]
+            return entries
+        entries = sorted(entries, key=lambda entry: entry.is_file())
+        return entries
     def _add_directory(
         self, directory, index, entries_count, prefix, connector
     ):
