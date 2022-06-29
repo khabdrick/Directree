@@ -35,7 +35,7 @@ class _Generator:
         self._tree.append(f"{self._root_dir}{os.sep}")
         self._tree.append(PIPE)
 
-    def _tree_body(self, directory, space=""):
+    def _tree_body(self, directory, prefix=""):
         """Generate directory tree diagram"""
         entries = directory.iterdir()
         entries = sorted(entries, key=lambda entry: entry.is_file())
@@ -44,7 +44,25 @@ class _Generator:
             connector = L if index == entries_count - 1 else HAMMER
             if entry.is_dir():
                 self._add_directory(
-                    entry, index, entries_count, space, connector
+                    entry, index, entries_count, prefix, connector
                 )
             else:
-                self._add_file(entry, space, connector)
+                self._add_file(entry, prefix, connector)
+    def _add_directory(
+        self, directory, index, entries_count, prefix, connector
+    ):
+        self._tree.append(f"{prefix}{connector} {directory.name}{os.sep}")
+        if index != entries_count - 1:
+            prefix += PIPE_SPACE
+        else:
+            prefix += SPACE
+        self._tree_body(
+            directory=directory,
+            prefix=prefix,
+        )
+        self._tree.append(prefix.rstrip())
+
+    def _add_file(self, file, prefix, connector):
+        self._tree.append(f"{prefix}{connector} {file.name}")   
+
+# Directree(".").generate_tree()
